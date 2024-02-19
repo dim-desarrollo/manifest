@@ -1,0 +1,19 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: backend-echo
+spec:
+  replicas: 3
+  selector:
+     matchLabels:
+       app: backend-echo
+  template:
+     metadata:
+       labels:
+         app: backend-echo
+     spec:
+      containers:
+      - name: backend-echo
+        image: dimsistemas/api_habilitacion:002
+        ports:
+        - containerPort: 5050
