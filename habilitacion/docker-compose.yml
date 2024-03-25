@@ -20,7 +20,7 @@ services:
       - my-habilitacion
       
   nginx-expuesto:
-    build: ./nginx-expuesto
+    build: ./nginx-expuesto.conf
     ports:
       - "5050:80"
     restart: always
