@@ -1,0 +1,34 @@
+version: '3'
+
+services:
+  api-habilitacion:
+    image: api_habilitacion:${TAG}
+    container_name: ${CONTAINER-NAME}
+    ports:
+      - "6060:5050"  # Puedes ajustar el mapeo de puertos según tus necesidades
+    expose:
+      - 6060
+    environment:
+      - JAVA_OPTS=-Xmx4g  # Asigna 4 GB de memoria al heap de Java
+    restart: always  # Configura para reiniciar siempre que caiga
+    command: -p 6060
+    logging:
+      driver: loki
+      options:
+        loki-url: "http://localhost:3100/loki/api/v1/push"
+    networks:
+      - my-habilitacion
+      
+  nginx-expuesto:
+    build: ./nginx-expuesto
+    ports:
+      - "5050:80"
+    restart: always
+    networks:
+      - my-habilitacion
+    logging:
+      driver: loki
+      options:
+        loki-url: "http://localhost:3100/loki/api/v1/push"
+    depends_on:
+      - api-habilitacion
