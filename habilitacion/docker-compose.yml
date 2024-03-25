@@ -1,9 +1,9 @@
 version: '3'
 
 services:
-  api-habilitacion:
+  api-habilitacion-replica1:
     image: api_habilitacion:${TAG}
-    container_name: ${CONTAINER-NAME}
+    container_name: api-habilitacion-replica1
     ports:
       - "6060:5050"  # Puedes ajustar el mapeo de puertos según tus necesidades
     expose:
@@ -12,6 +12,24 @@ services:
       - JAVA_OPTS=-Xmx4g  # Asigna 4 GB de memoria al heap de Java
     restart: always  # Configura para reiniciar siempre que caiga
     command: -p 6060
+    logging:
+      driver: loki
+      options:
+        loki-url: "http://localhost:3100/loki/api/v1/push"
+    networks:
+      - my-habilitacion
+
+    api-habilitacion-replica2:
+    image: api_habilitacion:${TAG}
+    container_name: api-habilitacion-replica2
+    ports:
+      - "6061:5050"  # Puedes ajustar el mapeo de puertos según tus necesidades
+    expose:
+      - 6061
+    environment:
+      - JAVA_OPTS=-Xmx4g  # Asigna 4 GB de memoria al heap de Java
+    restart: always  # Configura para reiniciar siempr    :
+    command: -p 6061
     logging:
       driver: loki
       options:
@@ -31,4 +49,5 @@ services:
       options:
         loki-url: "http://localhost:3100/loki/api/v1/push"
     depends_on:
-      - api-habilitacion
+      - api-habilitacion-replica1
+      - api-habilitacion-replica2
